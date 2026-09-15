@@ -2,8 +2,6 @@ from pathlib import Path
 import csv
 import json
 
-import pytest
-
 from cisc217_week4.student_records import (
     ensure_folder,
     read_text_lines,
@@ -40,12 +38,7 @@ def test_write_and_read_text_lines_utf8(tmp_path):
 
 def test_read_text_lines_skips_blank_lines_and_strips(tmp_path):
     path = tmp_path / "names.txt"
-    path.write_text("  Ada  
-
-Grace
-
-Linus
-", encoding="utf-8")
+    path.write_text("  Ada  \n\nGrace\n  Linus  \n", encoding="utf-8")
 
     assert read_text_lines(path) == ["Ada", "Grace", "Linus"]
 
@@ -53,18 +46,12 @@ Linus
 def test_read_students_csv_converts_scores_and_skips_invalid_rows(tmp_path):
     path = tmp_path / "students.csv"
     path.write_text(
-        "student_id,name,score
-"
-        "s001,Ada,95
-"
-        "s002,Grace,88.5
-"
-        "s003,Missing Score,not-a-number
-"
-        ",No ID,77
-"
-        "s004,,91
-",
+        "student_id,name,score\n"
+        "s001,Ada,95\n"
+        "s002,Grace,88.5\n"
+        "s003,Missing Score,not-a-number\n"
+        ",No ID,77\n"
+        "s004,,91\n",
         encoding="utf-8",
     )
 
@@ -115,8 +102,7 @@ def test_saved_json_is_readable_with_indent(tmp_path):
     save_students_json(path, students)
     text = path.read_text(encoding="utf-8")
 
-    assert "
-" in text
+    assert "\n" in text
     assert "  " in text
     assert json.loads(text) == students
 
